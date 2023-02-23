@@ -5,7 +5,7 @@ import { getProductsList, getProductsById } from "@functions/index";
 const serverlessConfiguration: AWS = {
   service: "product-service",
   frameworkVersion: "3",
-  plugins: ["serverless-esbuild"],
+  plugins: ["serverless-esbuild", "serverless-auto-swagger"],
   provider: {
     name: "aws",
     runtime: "nodejs14.x",
@@ -18,9 +18,6 @@ const serverlessConfiguration: AWS = {
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1",
       NODE_OPTIONS: "--enable-source-maps --stack-trace-limit=1000",
-    },
-    httpApi: {
-      cors: true,
     },
   },
   // import the function via paths
@@ -36,6 +33,11 @@ const serverlessConfiguration: AWS = {
       define: { "require.resolve": undefined },
       platform: "node",
       concurrency: 10,
+    },
+    autoswagger: {
+      apiType: "http",
+      typefiles: ["./src/types/api-types.d.ts"],
+      basePath: "/dev",
     },
   },
 };

@@ -8,6 +8,14 @@ export default {
         method: "get",
         path: "products",
         cors: true,
+        summary: "List of products",
+        description: "Request all available products",
+        responses: {
+          200: {
+            description: "success",
+            bodyType: "ProductsList",
+          },
+        },
       },
     },
   ],

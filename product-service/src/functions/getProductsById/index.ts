@@ -8,6 +8,18 @@ export default {
         method: "get",
         path: "products/{productId}",
         cors: true,
+        summary: "Product details",
+        description: "Request available product by Id",
+        responses: {
+          200: {
+            description: "success",
+            bodyType: "Product",
+          },
+          404: {
+            description: "fail",
+            bodyType: "ErrorBody",
+          },
+        },
       },
     },
   ],
