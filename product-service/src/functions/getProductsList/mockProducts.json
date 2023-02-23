@@ -1,0 +1,26 @@
+[
+    {
+        "id": "1",
+        "title": "Ring Alarm Smoke and CO Listener",
+        "description": "Ring Alarm Smoke and CO Listener alerts you on your smart phone when your existing smoke and carbon monoxide detectors sound their alarms.",
+        "price": 34.99
+    },
+    {
+        "id": "2",
+        "title": "Eve Door & Window - Apple HomeKit Smart Home",
+        "description": "Eve Door & Window requires iPhone or iPad with the latest version of iOS/iPadOS. Check your door or window: See the current open/closed state at a glance Get activity notifications and automatically activate other HomeKit-enabled accessories courtesy of your home hub (HomePod mini, HomePod, or Apple TV). Time and duration statistics to make smarter choices",
+        "price": 39.95
+     },
+     {
+        "id": "3",
+        "title": "myQ Chamberlain Smart Garage Control",
+        "description": "Wireless Garage Hub and Sensor with Wifi & Bluetooth - Smartphone Controlled, myQ-G0401-ES, White",
+        "price": 20.70
+     },
+     {
+        "id": "4",
+        "title": "Smart Lock, ULTRALOQ U-Bolt",
+        "description": "5-in-1 Keyless Entry Door Lock with Smartphone, Bluetooth, Keypad, Auto Unlock, Smart Door Lock, Smart Deadbolt, Front Door Lock, ANSI Grade 1 Certified - Black",
+        "price": 39
+     }
+]
