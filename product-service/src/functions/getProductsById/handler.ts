@@ -3,9 +3,9 @@ import { middyfy } from "@libs/lambda";
 import mockProducts from "../getProductsList/mockProducts.json";
 import type { ValidatedEventAPIGatewayProxyEvent } from "@libs/api-gateway";
 
-const getProductsById: ValidatedEventAPIGatewayProxyEvent<unknown> = async (
-  event
-) => {
+export const getProductsById: ValidatedEventAPIGatewayProxyEvent<
+  unknown
+> = async (event) => {
   const { productId } = event.pathParameters;
   const availableProduct = mockProducts.find(({ id }) => id === productId);
 
