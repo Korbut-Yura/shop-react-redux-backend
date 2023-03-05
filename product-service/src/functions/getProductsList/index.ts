@@ -12,8 +12,12 @@ export default {
         description: "Request all available products",
         responses: {
           200: {
-            description: "success",
+            description: "Success",
             bodyType: "ProductsList",
+          },
+          500: {
+            description: "Server error",
+            bodyType: "InfoResponse",
           },
         },
       },
