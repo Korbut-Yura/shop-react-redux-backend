@@ -20,9 +20,57 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "success",
+            "description": "Success",
             "schema": {
               "$ref": "#/definitions/ProductsList"
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "$ref": "#/definitions/InfoResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create Product",
+        "description": "Add a new product to the table",
+        "operationId": "createProduct.post.products",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Body required in the request",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ProductPostBody"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product added successfully",
+            "schema": {
+              "$ref": "#/definitions/InfoResponse"
+            }
+          },
+          "400": {
+            "description": "Product data is invalid",
+            "schema": {
+              "$ref": "#/definitions/InfoResponse"
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "$ref": "#/definitions/InfoResponse"
             }
           }
         }
@@ -49,15 +97,21 @@
         ],
         "responses": {
           "200": {
-            "description": "success",
+            "description": "There is product in a table",
             "schema": {
               "$ref": "#/definitions/Product"
             }
           },
           "404": {
-            "description": "fail",
+            "description": "There is no product  in a table",
             "schema": {
-              "$ref": "#/definitions/ErrorBody"
+              "$ref": "#/definitions/InfoResponse"
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "$ref": "#/definitions/InfoResponse"
             }
           }
         }
@@ -94,6 +148,57 @@
       "title": "Product",
       "type": "object"
     },
+    "Stock": {
+      "properties": {
+        "product_id": {
+          "title": "Stock.product_id"
+        },
+        "count": {
+          "title": "Stock.count",
+          "type": "number"
+        }
+      },
+      "required": [
+        "product_id",
+        "count"
+      ],
+      "additionalProperties": false,
+      "title": "Stock",
+      "type": "object"
+    },
+    "AvailableProduct": {
+      "$ref": "#/definitions/Product",
+      "title": "AvailableProduct"
+    },
+    "ProductPostBody": {
+      "properties": {
+        "title": {
+          "title": "ProductPostBody.title",
+          "type": "string"
+        },
+        "description": {
+          "title": "ProductPostBody.description",
+          "type": "string"
+        },
+        "price": {
+          "title": "ProductPostBody.price",
+          "type": "number"
+        },
+        "count": {
+          "title": "ProductPostBody.count",
+          "type": "number"
+        }
+      },
+      "required": [
+        "title",
+        "description",
+        "price",
+        "count"
+      ],
+      "additionalProperties": false,
+      "title": "ProductPostBody",
+      "type": "object"
+    },
     "ProductsList": {
       "properties": {
         "products": {
@@ -112,10 +217,10 @@
       "title": "ProductsList",
       "type": "object"
     },
-    "ErrorBody": {
+    "InfoResponse": {
       "properties": {
         "message": {
-          "title": "ErrorBody.message",
+          "title": "InfoResponse.message",
           "type": "string"
         }
       },
@@ -123,7 +228,7 @@
         "message"
       ],
       "additionalProperties": false,
-      "title": "ErrorBody",
+      "title": "InfoResponse",
       "type": "object"
     }
   },

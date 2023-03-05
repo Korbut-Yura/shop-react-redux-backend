@@ -1,6 +1,10 @@
 import type { AWS } from "@serverless/typescript";
 
-import { getProductsList, getProductsById } from "@functions/index";
+import {
+  getProductsList,
+  getProductsById,
+  createProduct,
+} from "@functions/index";
 
 const serverlessConfiguration: AWS = {
   service: "product-service",
@@ -16,14 +20,34 @@ const serverlessConfiguration: AWS = {
       shouldStartNameWithService: true,
     },
     environment: {
+      PRODUCT_TABLE_NAME: "${self:custom.products_table_name}",
+      STOCKS_TABLE_NAME: "${self:custom.stocks_table_name}",
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1",
       NODE_OPTIONS: "--enable-source-maps --stack-trace-limit=1000",
     },
+    iamRoleStatements: [
+      {
+        Effect: "Allow",
+        Action: [
+          "dynamodb:Query",
+          "dynamodb:Scan",
+          "dynamodb:GetItem",
+          "dynamodb:PutItem",
+          "dynamodb:UpdateItem",
+          "dynamodb:DeleteItem",
+        ],
+        Resource: [
+          "arn:aws:dynamodb:eu-west-1:704165866494:table/${self:custom.products_table_name}",
+          "arn:aws:dynamodb:eu-west-1:704165866494:table/${self:custom.stocks_table_name}",
+        ],
+      },
+    ],
   },
-  // import the function via paths
-  functions: { getProductsList, getProductsById },
+  functions: { getProductsList, getProductsById, createProduct },
   package: { individually: true },
   custom: {
+    products_table_name: "Products",
+    stocks_table_name: "Stocks",
     esbuild: {
       bundle: true,
       minify: false,

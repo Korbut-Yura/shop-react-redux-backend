@@ -12,12 +12,16 @@ export default {
         description: "Request available product by Id",
         responses: {
           200: {
-            description: "success",
+            description: "There is product in a table",
             bodyType: "Product",
           },
           404: {
-            description: "fail",
-            bodyType: "ErrorBody",
+            description: "There is no product  in a table",
+            bodyType: "InfoResponse",
+          },
+          500: {
+            description: "Server error",
+            bodyType: "InfoResponse",
           },
         },
       },
