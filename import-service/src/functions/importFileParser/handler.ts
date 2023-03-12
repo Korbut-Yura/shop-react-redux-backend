@@ -7,11 +7,11 @@ const s3 = new S3({ region: "eu-west-1" });
 
 const importFileParser = async (event: S3Event) => {
   await Promise.all(
-    event.Records.map((record) => {
+    event.Records.map(({ s3: { object } }) => {
       const s3Stream = s3
         .getObject({
           Bucket: process.env.IMPORT_BUCKET_NAME,
-          Key: record.s3.object.key,
+          Key: object.key,
         })
         .createReadStream();
 
@@ -30,8 +30,21 @@ const importFileParser = async (event: S3Event) => {
             console.log(error);
             reject(error);
           })
-          .on("end", () => {
-            console.log("READ STREAM FINISHED");
+          .on("end", async () => {
+            await s3
+              .copyObject({
+                Bucket: process.env.IMPORT_BUCKET_NAME,
+                CopySource: `${process.env.IMPORT_BUCKET_NAME}/${object.key}`,
+                Key: object.key.replace("uploaded", "parsed"),
+              })
+              .promise();
+
+            await s3
+              .deleteObject({
+                Bucket: process.env.IMPORT_BUCKET_NAME,
+                Key: object.key,
+              })
+              .promise();
             resolve();
           });
       });
