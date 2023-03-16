@@ -4,6 +4,7 @@ import {
   getProductsList,
   getProductsById,
   createProduct,
+  catalogBatchProcess,
 } from "@functions/index";
 
 const serverlessConfiguration: AWS = {
@@ -20,6 +21,7 @@ const serverlessConfiguration: AWS = {
       shouldStartNameWithService: true,
     },
     environment: {
+      SQS_URL: { Ref: "catalogItemsQueue" },
       PRODUCT_TABLE_NAME: "${self:custom.products_table_name}",
       STOCKS_TABLE_NAME: "${self:custom.stocks_table_name}",
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1",
@@ -41,9 +43,29 @@ const serverlessConfiguration: AWS = {
           "arn:aws:dynamodb:eu-west-1:704165866494:table/${self:custom.stocks_table_name}",
         ],
       },
+      {
+        Effect: "Allow",
+        Action: "sqs:*",
+        Resource: { "Fn::GetAtt": ["catalogItemsQueue", "Arn"] },
+      },
     ],
   },
-  functions: { getProductsList, getProductsById, createProduct },
+  resources: {
+    Resources: {
+      catalogItemsQueue: {
+        Type: "AWS::SQS::Queue",
+        Properties: {
+          QueueName: "catalogItemsQueue",
+        },
+      },
+    },
+  },
+  functions: {
+    getProductsList,
+    getProductsById,
+    createProduct,
+    catalogBatchProcess,
+  },
   package: { individually: true },
   custom: {
     products_table_name: "Products",

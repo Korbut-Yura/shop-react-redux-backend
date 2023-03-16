@@ -167,7 +167,7 @@
       "type": "object"
     },
     "AvailableProduct": {
-      "$ref": "#/definitions/Product",
+      "allOf": [],
       "title": "AvailableProduct"
     },
     "ProductPostBody": {

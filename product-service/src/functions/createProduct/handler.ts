@@ -2,14 +2,16 @@ import { formatJSONResponse } from "@libs/api-gateway";
 import { middyfy } from "@libs/lambda";
 import { v4 as uuidv4 } from "uuid";
 import type { ValidatedEventAPIGatewayProxyEvent } from "@libs/api-gateway";
-import { transactWriteProduct } from "@libs/dynamoDB";
+import { getProductsTrasactItems, transactWriteProduct } from "@libs/dynamoDB";
 import Schema from "./schema";
 
 export const createProduct: ValidatedEventAPIGatewayProxyEvent<
   typeof Schema
 > = async (event) => {
   try {
-    await transactWriteProduct({ ...event.body, id: uuidv4() });
+    await transactWriteProduct(
+      getProductsTrasactItems({ ...event.body, id: uuidv4() })
+    );
 
     return formatJSONResponse({ message: "Successfully added" });
   } catch (e) {

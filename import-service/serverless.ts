@@ -31,9 +31,13 @@ const serverlessConfiguration: AWS = {
         Action: "s3:*",
         Resource: ["arn:aws:s3:::${self:custom.import_bucket_name}/*"],
       },
+      // {
+      //   Effect: "Allow",
+      //   Action: "sqs:SendMessage",
+      //   Resource: { "Fn::GetAtt": ["catalogItemsQueue", "Arn"] },
+      // },
     ],
   },
-  // import the function via paths
   functions: { importProductsFile, importFileParser },
   package: { individually: true },
   custom: {
