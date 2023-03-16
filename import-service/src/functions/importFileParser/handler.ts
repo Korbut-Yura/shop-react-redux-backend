@@ -5,11 +5,7 @@ import csv from "csv-parser";
 
 const importFileParser = async (event: S3Event) => {
   const s3 = new AWS.S3({ region: "eu-west-1" });
-  // const SQS = new AWS.SQS();
-
-  // const { QueueUrl } = await SQS.getQueueUrl({
-  //   QueueName: "catalogItemsQueue",
-  // }).promise();
+  const SQS = new AWS.SQS();
 
   await Promise.all(
     event.Records.map(({ s3: { object } }) => {
@@ -29,11 +25,10 @@ const importFileParser = async (event: S3Event) => {
             })
           )
           .on("data", async (data) => {
-            console.log(JSON.stringify(data));
-            // await SQS.sendMessage({
-            //   QueueUrl,
-            //   MessageBody: JSON.stringify(data),
-            // }).promise();
+            await SQS.sendMessage({
+              QueueUrl: process.env.SQS_URL,
+              MessageBody: JSON.stringify(data),
+            }).promise();
           })
           .on("error", (error) => {
             console.log(error);

@@ -59,6 +59,18 @@ const serverlessConfiguration: AWS = {
         },
       },
     },
+    Outputs: {
+      sqsURL: {
+        Description: "SQS URL for sending parsed product",
+        Value: { Ref: "catalogItemsQueue" },
+        Export: { Name: "sqsURL" },
+      },
+      sqsARN: {
+        Description: "SQS ARN",
+        Value: { "Fn::GetAtt": ["catalogItemsQueue", "Arn"] },
+        Export: { Name: "sqsARN" },
+      },
+    },
   },
   functions: {
     getProductsList,
