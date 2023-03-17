@@ -22,6 +22,7 @@ const serverlessConfiguration: AWS = {
     },
     environment: {
       SQS_URL: { Ref: "catalogItemsQueue" },
+      SNS_ARN: { Ref: "createProductTopic" },
       PRODUCT_TABLE_NAME: "${self:custom.products_table_name}",
       STOCKS_TABLE_NAME: "${self:custom.stocks_table_name}",
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1",
@@ -48,6 +49,11 @@ const serverlessConfiguration: AWS = {
         Action: "sqs:*",
         Resource: { "Fn::GetAtt": ["catalogItemsQueue", "Arn"] },
       },
+      {
+        Effect: "Allow",
+        Action: "sns:*",
+        Resource: { Ref: "createProductTopic" },
+      },
     ],
   },
   resources: {
@@ -56,6 +62,35 @@ const serverlessConfiguration: AWS = {
         Type: "AWS::SQS::Queue",
         Properties: {
           QueueName: "catalogItemsQueue",
+        },
+      },
+      createProductTopic: {
+        Type: "AWS::SNS::Topic",
+        Properties: {
+          TopicName: "createProductTopic",
+        },
+      },
+      createProductSubscription: {
+        Type: "AWS::SNS::Subscription",
+        Properties: {
+          Protocol: "email",
+          Endpoint: "yury_korbut@epam.com",
+          TopicArn: {
+            Ref: "createProductTopic",
+          },
+        },
+      },
+      filterPolicySubscription: {
+        Type: "AWS::SNS::Subscription",
+        Properties: {
+          Protocol: "email",
+          FilterPolicy: {
+            not_enough_products: ["true"],
+          },
+          Endpoint: "korbutyura@gmail.com",
+          TopicArn: {
+            Ref: "createProductTopic",
+          },
         },
       },
     },

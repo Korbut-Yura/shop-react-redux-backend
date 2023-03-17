@@ -23,12 +23,13 @@ export const queryById = async (tableName: string, id: string) => {
   return queryResults.Items[0];
 };
 
-export const transactWriteProduct = (transactItems: TransactWriteItemList) =>
-  dynamo
+export const transactWriteProduct = (transactItems: TransactWriteItemList) => {
+  return dynamo
     .transactWrite({
       TransactItems: transactItems,
     })
     .promise();
+};
 
 export const getProductsTrasactItems = ({
   id,
