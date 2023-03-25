@@ -10,7 +10,7 @@ export type Stock = {
   count: number;
 };
 
-export type AvailableProduct = Product & Pick<Stock, "count">;
+export type AvailableProduct = Omit<Product, "id"> & Pick<Stock, "count">;
 
 export interface ProductPostBody {
   title: string;

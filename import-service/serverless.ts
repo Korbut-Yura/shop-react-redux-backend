@@ -16,6 +16,7 @@ const serverlessConfiguration: AWS = {
       shouldStartNameWithService: true,
     },
     environment: {
+      SQS_URL: { "Fn::ImportValue": "sqsURL" },
       IMPORT_BUCKET_NAME: "${self:custom.import_bucket_name}",
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1",
       NODE_OPTIONS: "--enable-source-maps --stack-trace-limit=1000",
@@ -31,9 +32,13 @@ const serverlessConfiguration: AWS = {
         Action: "s3:*",
         Resource: ["arn:aws:s3:::${self:custom.import_bucket_name}/*"],
       },
+      {
+        Effect: "Allow",
+        Action: "sqs:SendMessage",
+        Resource: { "Fn::ImportValue": "sqsARN" },
+      },
     ],
   },
-  // import the function via paths
   functions: { importProductsFile, importFileParser },
   package: { individually: true },
   custom: {

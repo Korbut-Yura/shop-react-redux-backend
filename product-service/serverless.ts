@@ -4,6 +4,7 @@ import {
   getProductsList,
   getProductsById,
   createProduct,
+  catalogBatchProcess,
 } from "@functions/index";
 
 const serverlessConfiguration: AWS = {
@@ -20,6 +21,8 @@ const serverlessConfiguration: AWS = {
       shouldStartNameWithService: true,
     },
     environment: {
+      SQS_URL: { Ref: "catalogItemsQueue" },
+      SNS_ARN: { Ref: "createProductTopic" },
       PRODUCT_TABLE_NAME: "${self:custom.products_table_name}",
       STOCKS_TABLE_NAME: "${self:custom.stocks_table_name}",
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1",
@@ -41,9 +44,75 @@ const serverlessConfiguration: AWS = {
           "arn:aws:dynamodb:eu-west-1:704165866494:table/${self:custom.stocks_table_name}",
         ],
       },
+      {
+        Effect: "Allow",
+        Action: "sqs:*",
+        Resource: { "Fn::GetAtt": ["catalogItemsQueue", "Arn"] },
+      },
+      {
+        Effect: "Allow",
+        Action: "sns:*",
+        Resource: { Ref: "createProductTopic" },
+      },
     ],
   },
-  functions: { getProductsList, getProductsById, createProduct },
+  resources: {
+    Resources: {
+      catalogItemsQueue: {
+        Type: "AWS::SQS::Queue",
+        Properties: {
+          QueueName: "catalogItemsQueue",
+        },
+      },
+      createProductTopic: {
+        Type: "AWS::SNS::Topic",
+        Properties: {
+          TopicName: "createProductTopic",
+        },
+      },
+      createProductSubscription: {
+        Type: "AWS::SNS::Subscription",
+        Properties: {
+          Protocol: "email",
+          Endpoint: "yury_korbut@epam.com",
+          TopicArn: {
+            Ref: "createProductTopic",
+          },
+        },
+      },
+      filterPolicySubscription: {
+        Type: "AWS::SNS::Subscription",
+        Properties: {
+          Protocol: "email",
+          FilterPolicy: {
+            not_enough_products: ["true"],
+          },
+          Endpoint: "korbutyura@gmail.com",
+          TopicArn: {
+            Ref: "createProductTopic",
+          },
+        },
+      },
+    },
+    Outputs: {
+      sqsURL: {
+        Description: "SQS URL for sending parsed product",
+        Value: { Ref: "catalogItemsQueue" },
+        Export: { Name: "sqsURL" },
+      },
+      sqsARN: {
+        Description: "SQS ARN",
+        Value: { "Fn::GetAtt": ["catalogItemsQueue", "Arn"] },
+        Export: { Name: "sqsARN" },
+      },
+    },
+  },
+  functions: {
+    getProductsList,
+    getProductsById,
+    createProduct,
+    catalogBatchProcess,
+  },
   package: { individually: true },
   custom: {
     products_table_name: "Products",

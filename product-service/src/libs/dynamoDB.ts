@@ -1,5 +1,5 @@
 import AWS from "aws-sdk";
-import { AvailableProduct } from "src/types/api-types";
+import { TransactWriteItemList } from "aws-sdk/clients/dynamodb";
 
 const dynamo = new AWS.DynamoDB.DocumentClient();
 
@@ -23,36 +23,41 @@ export const queryById = async (tableName: string, id: string) => {
   return queryResults.Items[0];
 };
 
-export const transactWriteProduct = ({
+export const transactWriteProduct = (transactItems: TransactWriteItemList) => {
+  return dynamo
+    .transactWrite({
+      TransactItems: transactItems,
+    })
+    .promise();
+};
+
+export const getProductsTrasactItems = ({
   id,
   title,
   description,
   price,
   count,
-}: AvailableProduct) =>
-  dynamo
-    .transactWrite({
-      TransactItems: [
-        {
-          Put: {
-            TableName: process.env.PRODUCT_TABLE_NAME,
-            Item: {
-              id,
-              title,
-              description,
-              price,
-            },
-          },
+}) => {
+  return [
+    {
+      Put: {
+        TableName: process.env.PRODUCT_TABLE_NAME,
+        Item: {
+          id,
+          title,
+          description,
+          price,
         },
-        {
-          Put: {
-            TableName: process.env.STOCKS_TABLE_NAME,
-            Item: {
-              product_id: id,
-              count,
-            },
-          },
+      },
+    },
+    {
+      Put: {
+        TableName: process.env.STOCKS_TABLE_NAME,
+        Item: {
+          product_id: id,
+          count,
         },
-      ],
-    })
-    .promise();
+      },
+    },
+  ];
+};
